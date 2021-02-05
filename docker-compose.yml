@@ -52,12 +52,27 @@ services:
       - "traefik.http.routers.frontend.service=frontend"
       - "traefik.http.routers.frontend.tls.certresolver=leresolver"
 
-      # Expose edge agentsudo s at the address https://edge.${DOMAIN}
+      # Expose edge agents at the address https://edge.${DOMAIN}
       - "traefik.http.routers.edge.rule=Host(`edge.${DOMAIN}`)"
       - "traefik.http.routers.edge.entrypoints=websecure"
       - "traefik.http.services.edge.loadbalancer.server.port=8000"
       - "traefik.http.routers.edge.service=edge"
       - "traefik.http.routers.edge.tls.certresolver=leresolver"
+
+  host:
+    container_name: host
+    build: "./docker/test-host"
+    environment:
+      - DISPLAY=$DISPLAY
+    volumes:
+      - "/tmp/.X11-unix:/tmp/.X11-unix"
+      - "./bin:/home/developer/bin:ro"
+      - "./certificates:/home/developer/certificates"
+      - "./traefik.d:/home/developer/traefik.d"
+      - "./10-install-docker.sh:/home/developer/10-install-docker.sh:ro"
+      - "./20-prepare-host.sh:/home/developer/20-prepare-host.sh:ro"
+      - "./docker-compose.yml:/home/developer/docker-compose.yml"
+      - "./.env-dist:/home/developer/.env-dist:ro"
 
 volumes:
   portainer_data:
