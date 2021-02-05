@@ -28,5 +28,11 @@ apt install -y --auto-remove \
   docker-ce-cli \
   containerd.io
 
+# Create the docker group
+groupadd docker
+
+# Activate the group without restart
+newgrp docker
+
 # Use Docker as a non-root user
 usermod -aG docker "$(id -un)"
