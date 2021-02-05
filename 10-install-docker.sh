@@ -29,10 +29,10 @@ sudo apt-get install -y --auto-remove \
   containerd.io
 
 # Create the docker group
-groupadd docker
+sudo groupadd docker
 
 # Activate the group without restart
-newgrp docker
+sudo newgrp docker
 
 # Use Docker as a non-root user
 sudo usermod -aG docker "$(id -un)"
