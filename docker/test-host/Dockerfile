@@ -2,6 +2,7 @@ FROM ubuntu
 
 RUN apt-get update && apt-get install -y \
   sudo \
+  wget \
   libcanberra-gtk-module \
   libcanberra-gtk3-module \
   firefox

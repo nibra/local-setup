@@ -23,5 +23,5 @@ echo "${BROWSER_PASSWORD}\n" | ./bin/mkcert -install
 sudo update-ca-certificates
 
 # Prepare certification store for LetsEncrypt
-echo "" >certificates/acme.json
+echo "" > certificates/acme.json
 chmod 0600 certificates/acme.json
