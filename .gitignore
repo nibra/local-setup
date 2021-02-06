@@ -1,3 +1,4 @@
 /.env
 /certificates/acme.json
 /certificates/*.pem
+/traefik.d/certs.yml

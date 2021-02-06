@@ -61,3 +61,10 @@ DOMAIN=local.mydomain
 `https://portainer.your-local-domain`
 
 ## Certificate Management: mkcert, Let's Encrypt
+
+
+## Directories
+
+    /etc/certs
+    /etc/traefik/dynamic
+    /etc/dnsmasq.d
