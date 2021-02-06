@@ -22,7 +22,3 @@ echo -e "tls:\n  certificates:\n    - certFile: \"/etc/certs/${DOMAIN}.pem\"\n  
 
 # Activate the certificates
 sudo update-ca-certificates
-
-# Prepare certification store for LetsEncrypt
-echo "" >certificates/acme.json
-chmod 0600 certificates/acme.json
