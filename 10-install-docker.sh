@@ -15,7 +15,6 @@ sudo apt-get update
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --auto-remove \
   apt-transport-https \
   apt-utils \
-  ca-certificates \
   libnss3-tools \
   curl \
   gnupg-agent \
@@ -50,6 +49,7 @@ curl -s https://api.github.com/repos/docker/compose/releases/latest |
   wget -qi -
 chmod +x docker-compose-Linux-x86_64
 sudo mv docker-compose-Linux-x86_64 /usr/local/bin/docker-compose
+rm docker-compose-Linux-x86_64.sha256
 echo "done"
 
 # Use Docker as a non-root user

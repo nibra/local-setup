@@ -1,7 +1,10 @@
 # Local Services Setup
 
 > A generic setup for web development based on Docker including reverse proxy
-> and TLS (SSL) for local domains.
+> for local domains.
+
+This branch does not support TLS (SSL).
+See branches `tls/letsencrypt` and `tls/mkcert` for possible approaches.
 
 ## Installation
 
@@ -19,9 +22,6 @@ It removes outdated versions of Docker, if any, and installs the latest version.
 
 3. Run `20-prepare-host.sh` to configure the network settings according to your settings
 in the `.env` file.
-The script installs a local Certification Authority (CA) in your system trust store
-as well as in the Firefox and/or Chrome/Chromium trust store and creates certificates
-for your domain, its subdomains and localhost (including 127.0.0.1 and :::1). 
 
 After completing these steps, start the environment with
 
@@ -42,7 +42,7 @@ Kybernetes management at
 # Set your email address here, is for the generation of SSL certificates with Let's Encrypt.
 CERT_EMAIL=your-email
 
-# The location for the certificates
+# The location for the certificates (not used)
 CA_STORE=/usr/local/share/ca-certificates
 
 # The master password of your browser, used to access the NSS database
@@ -59,5 +59,3 @@ DOMAIN=local.mydomain
 ## Container Management: Portainer
 
 `https://portainer.your-local-domain`
-
-## Certificate Management: mkcert, Let's Encrypt
