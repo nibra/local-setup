@@ -13,16 +13,6 @@ fi
 
 echo "address=/${DOMAIN}/127.0.0.1" | sudo tee "/etc/dnsmasq.d/${DOMAIN}.conf"
 
-# Create local authority; requires browser's master password
-echo -e "${BROWSER_PASSWORD}\n" | ./bin/mkcert -install
-
-# Generate certificates
-./bin/mkcert -cert-file "certificates/${DOMAIN}.pem" -key-file "certificates/${DOMAIN}-key.pem" ${DOMAIN} "*.${DOMAIN}" localhost 127.0.0.1 ::1
-echo -e "tls:\n  certificates:\n    - certFile: \"/etc/certs/${DOMAIN}.pem\"\n      keyFile: \"/etc/certs/${DOMAIN}-key.pem\"" >traefik.d/certs.yml
-
-# Activate the certificates
-sudo update-ca-certificates
-
 # Prepare certification store for LetsEncrypt
 echo "" >certificates/acme.json
 chmod 0600 certificates/acme.json

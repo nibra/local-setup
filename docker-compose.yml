@@ -34,8 +34,7 @@ services:
       - "traefik.http.routers.traefik.rule=Host(`traefik.${DOMAIN}`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))"
       - "traefik.http.routers.traefik.entrypoints=websecure"
       - "traefik.http.routers.traefik.service=api@internal"
-      - "traefik.http.routers.traefik.tls=true"
-      #- "traefik.http.routers.traefik.tls.certresolver=leresolver"
+      - "traefik.http.routers.traefik.tls.certresolver=leresolver"
 
   portainer:
     container_name: portainer
@@ -52,16 +51,14 @@ services:
       - "traefik.http.routers.frontend.entrypoints=websecure"
       - "traefik.http.services.frontend.loadbalancer.server.port=9000"
       - "traefik.http.routers.frontend.service=frontend"
-      - "traefik.http.routers.frontend.tls=true"
-      #- "traefik.http.routers.frontend.tls.certresolver=leresolver"
+      - "traefik.http.routers.frontend.tls.certresolver=leresolver"
 
       # Expose edge agents at the address https://edge.${DOMAIN}
       - "traefik.http.routers.edge.rule=Host(`edge.${DOMAIN}`)"
       - "traefik.http.routers.edge.entrypoints=websecure"
       - "traefik.http.services.edge.loadbalancer.server.port=8000"
       - "traefik.http.routers.edge.service=edge"
-      - "traefik.http.routers.edge.tls=true"
-      #- "traefik.http.routers.edge.tls.certresolver=leresolver"
+      - "traefik.http.routers.edge.tls.certresolver=leresolver"
 
   host:
     container_name: host
