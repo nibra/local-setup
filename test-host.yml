@@ -1,17 +1,23 @@
-version: "3.3"
+version: "3.5"
 
 services:
   host:
     container_name: host
     build: "./docker/test-host"
     environment:
-    - DISPLAY=$DISPLAY
+      - DISPLAY=$DISPLAY
     volumes:
-    - "/tmp/.X11-unix:/tmp/.X11-unix"
-    - "./bin:/home/developer/bin:ro"
-    - "./certificates:/home/developer/certificates"
-    - "./traefik.d:/home/developer/traefik.d"
-    - "./10-install-docker.sh:/home/developer/10-install-docker.sh:ro"
-    - "./20-prepare-host.sh:/home/developer/20-prepare-host.sh:ro"
-    - "./docker-compose.yml:/home/developer/docker-compose.yml"
-    - "./.env-dist:/home/developer/.env-dist:ro"
+      - "/tmp/.X11-unix:/tmp/.X11-unix"
+      - "./bin:/home/developer/bin:ro"
+      - "./traefik.d:/home/developer/traefik.d"
+      - "./10-install-docker.sh:/home/developer/10-install-docker.sh:ro"
+      - "./20-prepare-host.sh:/home/developer/20-prepare-host.sh:ro"
+      - "./docker-compose.yml:/home/developer/docker-compose.yml"
+      - "./.env-dist:/home/developer/.env-dist:ro"
+    networks:
+      - local
+
+networks:
+  local:
+    external:
+      name: local

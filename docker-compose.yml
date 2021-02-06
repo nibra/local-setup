@@ -1,4 +1,4 @@
-version: "3.3"
+version: "3.5"
 
 services:
   traefik:
@@ -23,6 +23,8 @@ services:
       - "traefik.http.routers.traefik.rule=Host(`traefik.${DOMAIN}`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))"
       - "traefik.http.routers.traefik.entrypoints=web"
       - "traefik.http.routers.traefik.service=api@internal"
+    networks:
+      - local
 
   portainer:
     container_name: portainer
@@ -45,20 +47,12 @@ services:
       - "traefik.http.routers.edge.entrypoints=web"
       - "traefik.http.services.edge.loadbalancer.server.port=8000"
       - "traefik.http.routers.edge.service=edge"
-
-  host:
-    container_name: host
-    build: "./docker/test-host"
-    environment:
-      - DISPLAY=$DISPLAY
-    volumes:
-      - "/tmp/.X11-unix:/tmp/.X11-unix"
-      - "./bin:/home/developer/bin:ro"
-      - "./traefik.d:/home/developer/traefik.d"
-      - "./10-install-docker.sh:/home/developer/10-install-docker.sh:ro"
-      - "./20-prepare-host.sh:/home/developer/20-prepare-host.sh:ro"
-      - "./docker-compose.yml:/home/developer/docker-compose.yml"
-      - "./.env-dist:/home/developer/.env-dist:ro"
+    networks:
+      - local
 
 volumes:
   portainer_data:
+
+networks:
+  local:
+    name: local
