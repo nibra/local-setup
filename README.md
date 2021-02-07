@@ -35,6 +35,14 @@ and **Portainer**, the graphical user interface for Docker and
 Kybernetes management at
 `https://portainer.your-local-domain`.
 
+## Optional Services
+
+### Joomla
+
+```bash
+source .env && docker-compose -f joomla.yml up -d
+```
+
 ## Environment
 
 
