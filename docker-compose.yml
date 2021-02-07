@@ -1,5 +1,12 @@
 version: "3.5"
 
+networks:
+  traefik:
+    name: traefik
+    driver: bridge
+    attachable: true
+    internal: false
+
 services:
   traefik:
     container_name: traefik
@@ -9,8 +16,7 @@ services:
       - --entrypoints.websecure.address=:443
       - --providers.docker
       - --api.insecure=true
-      - --api.debug=true
-      - --log.level=ERROR
+      - --log.level=WARN
     restart: always
     ports:
       - "80:80"
@@ -18,13 +24,15 @@ services:
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
     labels:
-      # Expose traefik dashboard at the address https://traefik.${DOMAIN}
       - "traefik.enable=true"
+      - "traefik.docker.network=traefik"
+
+      # Expose traefik dashboard at the address https://traefik.${DOMAIN}:80
       - "traefik.http.routers.traefik.rule=Host(`traefik.${DOMAIN}`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))"
       - "traefik.http.routers.traefik.entrypoints=web"
       - "traefik.http.routers.traefik.service=api@internal"
     networks:
-      - local
+      - traefik
 
   portainer:
     container_name: portainer
@@ -35,24 +43,22 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - portainer_data:/data
     labels:
-      # Expose portainer dashboard at the address https://portainer.${DOMAIN}
       - "traefik.enable=true"
+      - "traefik.docker.network=traefik"
+
+      # Expose portainer dashboard at the address https://portainer.${DOMAIN}:80
       - "traefik.http.routers.frontend.rule=Host(`portainer.${DOMAIN}`)"
       - "traefik.http.routers.frontend.entrypoints=web"
-      - "traefik.http.services.frontend.loadbalancer.server.port=9000"
       - "traefik.http.routers.frontend.service=frontend"
+      - "traefik.http.services.frontend.loadbalancer.server.port=9000"
 
-      # Expose edge agents at the address https://edge.${DOMAIN}
+      # Expose edge agents at the address https://edge.${DOMAIN}:80
       - "traefik.http.routers.edge.rule=Host(`edge.${DOMAIN}`)"
       - "traefik.http.routers.edge.entrypoints=web"
-      - "traefik.http.services.edge.loadbalancer.server.port=8000"
       - "traefik.http.routers.edge.service=edge"
+      - "traefik.http.services.edge.loadbalancer.server.port=8000"
     networks:
-      - local
+      - traefik
 
 volumes:
   portainer_data:
-
-networks:
-  local:
-    name: local

@@ -1,0 +1,60 @@
+version: "3.5"
+
+networks:
+  traefik:
+    name: traefik
+    external: true
+  gitea:
+    name: gitea
+    internal: true
+
+services:
+  gitea:
+    container_name: gitea
+    image: gitea/gitea:1.13
+    restart: always
+    depends_on:
+      - gitea-db
+    environment:
+      - DOMAIN=git.${DOMAIN}
+      - HTTP_PORT=80
+      - USER_UID=1000
+      - USER_GID=1000
+      - DB_TYPE=mysql
+      - DB_HOST=db:3306
+      - DB_NAME=${GITEA_DB_NAME}
+      - DB_USER=${GITEA_DB_USER}
+      - DB_PASSWD=${GITEA_DB_PASSWD}
+      - DISABLE_SSH=true
+    links:
+      - "gitea-db:db"
+    volumes:
+      - "./data/gitea/data:/data"
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+    networks:
+      - traefik
+      - gitea
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik"
+
+      # Expose container at the address https://git.${DOMAIN}:80
+      - "traefik.http.routers.gitea.rule=Host(`git.${DOMAIN}`)"
+      - "traefik.http.routers.gitea.entrypoints=web"
+      - "traefik.http.routers.gitea.service=gitea"
+      - "traefik.http.services.gitea.loadbalancer.server.port=3000"
+
+  gitea-db:
+    container_name: gitea-db
+    image: mysql:5.7
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=${GITEA_DB_PASSWD}
+      - MYSQL_USER=${GITEA_DB_USER}
+      - MYSQL_PASSWORD=${GITEA_DB_PASSWD}
+      - MYSQL_DATABASE=${GITEA_DB_NAME}
+    networks:
+      - gitea
+    volumes:
+      - ./data/gitea/mysql:/var/lib/mysql

@@ -1,5 +1,14 @@
 version: "3.5"
 
+networks:
+  traefik:
+    name: traefik
+    external: true
+  joomla:
+    name: joomla
+    internal: true
+
+
 services:
   joomla:
     container_name: joomla
@@ -9,15 +18,16 @@ services:
     environment:
       - JOOMLA_DB_HOST=mysql
       - JOOMLA_DB_NAME="${JOOMLA_DB_NAME}"
-      - JOOMLA_DB_PASSWORD="${JOOMLA_DB_PASSWORD}"
+      - JOOMLA_DB_PASSWORD="${JOOMLA_DB_PASSWD}"
     links:
       - "joomla-db:mysql"
     networks:
-      - local
+      - traefik
       - joomla
     labels:
-      # Expose container at the address https://joomla.${DOMAIN}
+      # Expose container at the address https://joomla.${DOMAIN}:80
       - "traefik.enable=true"
+      - "traefik.docker.network=traefik"
       - "traefik.http.routers.joomla.rule=Host(`joomla.${DOMAIN}`)"
       - "traefik.http.routers.joomla.entrypoints=web"
       - "traefik.http.routers.joomla.service=joomla"
@@ -27,15 +37,8 @@ services:
     container_name: joomla-db
     image: mysql:5.6
     environment:
-      - MYSQL_ROOT_PASSWORD="${JOOMLA_DB_PASSWORD}"
+      - MYSQL_ROOT_PASSWORD="${JOOMLA_DB_PASSWD}"
     ports:
       - "3306:3306"
     networks:
       - joomla
-
-networks:
-  local:
-    external:
-      name: local
-  joomla:
-    name: joomla
