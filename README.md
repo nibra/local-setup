@@ -43,6 +43,10 @@ Kybernetes management at
 source .env && docker-compose -f gitea.yml up -d
 ```
 
+On the first start, go to `http://git.your-local-domain/install` and enter your
+configuration. Set `HTTP_PORT` to 80, otherwise, Gitea will provide repository links
+that contain a port other than 80, and routing through Traefik will fail.
+
 `http://git.your-local-domain`
 
 ### Content Management: Joomla
