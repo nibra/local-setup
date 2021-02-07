@@ -30,18 +30,28 @@ docker-compose up -d
 ```
 
 You'll find the dashboard of **Traefik**, the reverse proxy and load balancer, at
-`https://traefik.your-local-domain/dashboard/`
+`http://traefik.your-local-domain/dashboard/`
 and **Portainer**, the graphical user interface for Docker and
 Kybernetes management at
-`https://portainer.your-local-domain`.
+`http://portainer.your-local-domain`.
 
 ## Optional Services
 
-### Joomla
+### Source Code Management: Gitea
+
+```bash
+source .env && docker-compose -f gitea.yml up -d
+```
+
+`http://git.your-local-domain`
+
+### Content Management: Joomla
 
 ```bash
 source .env && docker-compose -f joomla.yml up -d
 ```
+
+`http://joomla.your-local-domain`
 
 ## Environment
 
@@ -62,8 +72,76 @@ DOMAIN=local.mydomain
 
 ## Reverse Proxy: Traefik
 
-`https://traefik.your-local-domain/dashboard/`
+`http://traefik.your-local-domain/dashboard/`
 
 ## Container Management: Portainer
 
-`https://portainer.your-local-domain`
+`http://portainer.your-local-domain`
+
+## Adding a new Service
+
+Any service that is supposed to be accessible through Traefik must connect to the
+`traefik` network.
+
+```yaml
+networks:
+  traefik:
+    name: traefik
+    external: true
+
+services:
+  myservice:
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik"
+    networks:
+      - traefik
+```
+
+If a service consists of more than one container, all those containers should be
+connected by an internal network.
+
+```yaml
+networks:
+  myinternalnet:
+    name: myinternalnet
+    internal: true
+
+services:
+  myservice:
+    links:
+      - "myinternalservice:expectedservice"
+    networks:
+      - myinternalnet
+
+  myinternalservice:
+    networks:
+      - myinternalnet
+```
+
+The complete example:
+
+```yaml
+networks:
+  traefik:
+    name: traefik
+    external: true
+  myinternalnet:
+    name: myinternalnet
+    internal: true
+
+services:
+  myservice:
+    links:
+      - "myinternalservice:expectedservice"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik"
+    networks:
+      - traefik
+      - myinternalnet
+
+  myinternalservice:
+    networks:
+      - myinternalnet
+```
